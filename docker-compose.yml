@@ -29,4 +29,16 @@ services:
                 image: julea-client-image
                 hostname: julea-client
                 container_name: julea-client
-                        
+        compiler:
+                build:
+                        context: ./docker/build
+                        dockerfile: Dockerfile_compiler
+                        args:
+                          arg_build_path: "/etc/julea"
+                depends_on:
+                        - base
+                volumes:
+                              - "./docker/build/files:/build"
+                image: julea-client-compiler
+                hostname: julea-client-compiler
+                container_name: julea-client-compiler

@@ -1,0 +1,8 @@
+FROM julea-base-config:latest
+
+ARG arg_build_path=/etc/julea
+ENV env_build_path=$arg_build_path
+
+COPY docker-entrypoint.sh /entrypoint.sh
+COPY compile.sh /
+ENTRYPOINT ["sh", "-c", "/entrypoint.sh $env_build_path"]
