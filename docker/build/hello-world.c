@@ -27,6 +27,7 @@
 int
 main(int argc, char** argv)
 {
+	printf("Start with examples...");
 	g_autoptr(JBatch) batch = NULL;
 	g_autoptr(JDBEntry) entry = NULL;
 	g_autoptr(JDBSchema) schema = NULL;
@@ -96,6 +97,6 @@ main(int argc, char** argv)
 			printf("DB contains: %s (%" G_GUINT64_FORMAT " bytes)\n", db_field, db_length);
 		}
 	}
-
+	printf("Done with example.");
 	return 0;
 }

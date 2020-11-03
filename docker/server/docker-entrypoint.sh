@@ -1,9 +1,9 @@
 #!/bin/bash
 
-. /etc/julea/scripts/environment.sh
+. /julea/scripts/environment.sh
 
 #Set environment script to .bashrc. So when exec is called with /bin/bash variables are set
-sed -i -e '$a. /etc/julea/scripts/environment.sh' ~/.bashrc
+sed -i -e '$a. /julea/scripts/environment.sh' ~/.bashrc
 
 julea-config --user \
   --object-servers="localhost:9876" --kv-servers="localhost:9876" --db-servers="localhost:9876" \
