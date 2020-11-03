@@ -1,0 +1,16 @@
+steps:
+- id: build
+  uses: ./julea/
+  options:
+    volumes:
+    - /home/marcel/ba/julea/docker/build:/build
+  runs: [bash]
+  args:
+  - -c 
+  - | 
+    cd /
+    . entrypoint.sh 
+    cd /build 
+    make 
+    ./hello-world
+    make clean

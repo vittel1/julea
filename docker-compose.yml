@@ -1,18 +1,8 @@
 services:
-        base:
-                image: julea-base-config
-                build: 
-                        context: .
-                        dockerfile: docker/Dockerfile_base
-                        args: 
-                          build_path: "/etc/julea"
-                          dependency_mode: "standard"
         server:
                 build:
                         context: ./docker/server
-                        dockerfile: Dockerfile_server
-                depends_on:
-                        - base
+                        dockerfile: Dockerfile
                 image: julea-server-image
                 ports: 
                         - "9876:9876"
@@ -21,24 +11,16 @@ services:
         client:
                 build:
                         context: ./docker/client
-                        dockerfile: Dockerfile_client
-                        args:
-                          arg_build_path: "/etc/julea"
-                depends_on:
-                        - base
+                        dockerfile: Dockerfile
                 image: julea-client-image
                 hostname: julea-client
                 container_name: julea-client
-        compiler:
+        volume:
                 build:
-                        context: ./docker/build
-                        dockerfile: Dockerfile_compiler
-                        args:
-                          arg_build_path: "/etc/julea"
-                depends_on:
-                        - base
+                        context: ./docker/client
+                        dockerfile: Dockerfile
                 volumes:
-                              - "./docker/build/files:/build"
-                image: julea-client-compiler
-                hostname: julea-client-compiler
-                container_name: julea-client-compiler
+                              - "./docker/build:/build"
+                image: julea-client-image-volume
+                hostname: julea-client-volume
+                container_name: julea-client-volume

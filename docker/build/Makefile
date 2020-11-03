@@ -9,4 +9,6 @@ clean:
 	rm -f $(BIN)
 
 run: $(BIN)
+	/julea/scripts/setup.sh start
 	./$(BIN)
+	/julea/scripts/setup.sh stop
