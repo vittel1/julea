@@ -10,7 +10,20 @@ steps:
   - | 
     cd /
     . entrypoint.sh 
-    cd /build 
-    make 
+    cd /build
+    make
+
+- id: exec
+  uses: ./julea/
+  options:
+    volumes:
+    - /home/marcel/ba/julea/docker/build:/build
+  runs: [bash]
+  args:
+  - -c
+  - |
+    cd /
+    . entrypoint.sh
+    cd /build
     ./hello-world
     make clean
