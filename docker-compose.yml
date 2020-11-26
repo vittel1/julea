@@ -1,26 +1,15 @@
 services:
-        server:
+        juleaServer:
                 build:
-                        context: ./docker/server
-                        dockerfile: Dockerfile
-                image: julea-server-image
+                        context: ./container/docker/server
                 ports: 
                         - "9876:9876"
-                hostname: julea-server
+                image: julea-server-image
                 container_name: julea-server
-        client:
+        juleaClient:
                 build:
-                        context: ./docker/client
-                        dockerfile: Dockerfile
-                image: julea-client-image
-                hostname: julea-client
-                container_name: julea-client
-        volume:
-                build:
-                        context: ./docker/client
-                        dockerfile: Dockerfile
+                        context: ./container/docker/client
                 volumes:
-                              - "./docker/build:/build"
-                image: julea-client-image-volume
-                hostname: julea-client-volume
-                container_name: julea-client-volume
+                        - "./container/docker/client/build:/build"
+                image: julea-client-image
+                container_name: julea-client
