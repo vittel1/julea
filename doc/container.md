@@ -92,6 +92,11 @@ Zudem wird für beide Container ein Name für das Image und einer für den Conta
 Für den Client wurde mit dem Volume wieder, wie im einzel Client Beispiel, ein Verzeichnis vom Host in den Container gemountet.
 Das erstellen des networks ist nicht mehr notwendig, da docker-compose das für einen übernimmt. Für das Beispiel wird ein Network erstellt, das julea_default heißt. Dieses lässt sich mit docker network inspect julea_default untersuchen. In diesem sind dann beide Beispiel Container zu finden.
 
+```
+docker-compose up -d
+```
+
 ## Singularity
+
 
 ## Podman
