@@ -2,16 +2,22 @@
 
 ## Docker
 
-Root-Rechte auf dem System werden benötigt.
+Root privileges are required on the system.
 
 ### Docker Image
 
-Im Root Verzeichnis des Repository liegt ein Beispiel Dockerfile, dass die Standard Dependencies lädtund JULEA danach konfiguriert mittels Meson und Ninja. Das Dockerfile kann angepasst werden und dann ein neues Images von JULEA erstellt werden. Wichtig hier ist der Pfad: JULEA wird standardmäßig nach /julea kopiert.
+In the root directory of the repository is a Dockerfile that loads the standard dependencies 
+and configures JULEA using Meson and Ninja. By default JULEA files are copied to **/julea**. 
+
+The Dockerfile can be modified to create a new image. 
+
 ```
 docker build -t julea-standard:1.0 .
 ```
 
-Das Image kann potentiel auf Dockerhub veröffentlich werden. Dann muss wie folgt vorgegangen werden.
+The image can be published on Dockerhub. For this, the following commands must be executed. 
+Further information can be found here: https://docs.docker.com/docker-hub/repos/
+
 ```
 docker tag julea-standard:1.0 <DOCKER ID>/julea-standard:1.0
 docker push <DOCKER ID>/julea-standard:1.0
@@ -19,14 +25,12 @@ docker push <DOCKER ID>/julea-standard:1.0
 
 ### Use Docker Image
 
-In dem Verzeichnis ./container/docker gibt es Beispiele für die Benutzung von JULEA. Zum einen für einen JULEA-Server und zum anderen für einen JULEA-Client.
-
-#### Network
-Wissen über das Networking von Docker sind notwendig.
-Docs: https://docs.docker.com/config/containers/container-networking/
+In the directory **./container/docker** a JULEA-Server and a JULEA-Client and their interaction are shown as an example.
+For background information on how the Docker network works read the following docs:  https://docs.docker.com/config/containers/container-networking/
 
 #### Network Communication between containers
-Create your own network. Diese Network müssen dann alle Container, die miteinander kommunizieren wollen, mitbekommen.
+If docker-compose is not an option a network must be created for the communication between the different containers.
+All containers that are supposed to interact with each other have set this network as a parameter.
 
 ```
 docker network create myNet
@@ -34,7 +38,15 @@ docker network create myNet
 
 #### Server
 
-Der Server beutzt im ersten Schritt das Image aus dem ersten Kapitel. Im gleichen Ordner wird ein Skript angelegt, durch das der Server konfiguriert wird. Lesen Sie das nächste Kapitel für genauere Hintergrund Informationen. Das Skript setzt die Konfiguration von JULEA fest mittel julea-config und startet anschließend einen Server. Außerdem wird in die .bashrc das Laden der Umgebumgsvariablen festgesetzt, damit, wenn man innerhalb des Containers arbeitet, die Befehle von JULEA zur Verfügung stehen. Im Dockerfile das entsprechende Skript wird in das Image reinkopiert. Der Expose Befehl zeigt an, welcher Port standardmäßig für den Server vergeben wird. Dies ist mehr zu dokumentation zwecken. Abschließend wird ein Entrypoint festgelegt, der aufgerufen wird, wenn docker run ausgeführt wird, und mittels CMD-Befehl werden die default Werte für den Server gesetzt. Hier der Servername und die Portnummer. Diese werden an das Skript übergeben.
+The Dockerfile of the server uses the JULEA image from Dockerhub. In the same folder a script is created to configure the server. 
+Read the next chapter for more detailed background information. 
+The script loads the environment variables, sets the configuration of JULEA by *julea-config* and then starts a server by *julea-server*.
+Also, it adds the execution of the environment script to **.bashrc** so that the variables are load when entering the container.
+This need to be done otherwise the JULEA commands are not available within the container.
+
+In the dockerfile this script is copied into the image. The default port for ther JULEA server is exposed.
+At the end the *ENTRYPOINT* is defined which calls the script when *docker run* is executed. 
+The default values for the script are provided by the *CMD* command (hostname: **juleaServer**, port number: **9876**). 
 
 ```
 cd ./container/docker/server
@@ -43,18 +55,22 @@ docker run -it -d --name julea-server julea-server-image
 docker exec -ti julea-server /bin/bash
 ```
 
-oder falls die Default Werte überschrieben werden sollen
+If the default values should be overwritten add the requested values at the end of the statement
+
 ```
 docker run -it -d --name julea-server julea-server-image SERVERNAME PORT
 ```
 
-für die Network Communication
+For network communication, the hostname and port number given in the script must be set here. In addition the created network must be specified.
 ```
 docker run -it -d --network-alias juleaServer -p 9876:9876/tcp --network myNet --name julea-server julea-server-image
 ```
 
 #### Client
-Beim Client wird im Grunde die gleiche Vorgehensweise verwendet. Hier wird im CMD-Befehl des Dockerfiles der Hostname des JULEA-Servers angegeben, sowie die entsprechende Portnummer. Falls die Default Werte überschrieben werden, muss das im Client auch passieren. Im Skript wird am Ende ein Tail Befehl ausgeführt, der dafür sorgt, dass der Container nach dem Starten nicht sofort wieder heruntergefahren wird. Das würde normalerweise passieren, weil kein dauerhaft Prozess läuft.
+The client uses basically the same procedure. Here the hostname and port number of the JULEA server are specified in the *CMD* command of the Dockerfile.
+If the default values are overwritten, this must happen in the client as well. 
+In the script a *tail* command is executed at the end, which ensures that the container is not shut down immediately after starting. 
+This would normally happen because no permanent process is running.
 
 ```
 cd ./container/docker/client
@@ -63,48 +79,65 @@ docker run -it -d --name julea-client julea-client-image
 docker exec -ti julea-client /bin/bash
 ```
 
-oder falls die Default Werte überschrieben werden sollen
+If the default values should be overwritten:
 ```
 docker run -it -d --name julea-client julea-client-image SERVERNAME PORT
 ```
 
-für die Network Communication
+To be able to communicate with the server, the network must also be specified.
 ```
 docker run -it -d --network myNet --name julea-client julea-client-image
 ```
 
-#### Why to use ENTRYPOINT with a Script
-Im Dockerfile des Server steht nur der Entrypoint, der auf ein Skript verweist. Innerhalb des Skripts wird die Konfiguration für JULEA mittel julea-config vorgenommen und der Server gestartet. Jetzt könnte man sich fragen, warum diese Konfiguration nicht direkt im Dockerfile gesetzt wird. Dazu muss man wissen, dass jeder RUN Befehl im Dockerfile eine eigenen Layer erzeugt. Die Umgebungsvariablen, die mittels des environment-Skriptes gesetzt werden, sind nicht persistent. Das heißt, dass ein anderer Layer nicht mehr auf diese zugreifen kann, was dazu führt, dass mit zwei Run-Statements der Befehl julea-config nicht mehr verfügbar ist und es zu einem Fehler kommt. Ein Entrypoint-Befehl, der z.B. einen JULEA-Server starten könnten, hat ein ähnliches Problem. Auch hier kann nicht auf die Umgebungsvariablen zugegriffen werden, diese müssten erneut gesetzt werden, um den Befehl julea-server zu finden. Die gesamte Konfiguration innerhalb des Docker Containers zu machen, wird letztendlich viel zu kompliziert und unübersichtlicht. Deshalb wird empfohlen die Konfigiration auf ein externe Skript auszulagern.
-Doc: https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/
+### Why to a script in ENTRYPOINT
+The server's Dockerfile only contains the *ENTRYPOINT* that refers to a script. 
+Within the script the configuration for JULEA is done by *julea-config* and the server is started. 
+Now you might wonder why this configuration is not set directly in the Dockerfile. 
+For that it is important to know that every *RUN* command in the Dockerfile creates its own layer. 
+The environment variables, which are set by the environment script, are not persistent. 
+That means that another layer can't access them, which leads to that, 
+that with two *RUN* statements the command *julea-config* is no longer available and an error occurs. 
+An *ENTRYPOINT* that could start e.g. a JULEA server has a similar problem. 
+Again, the environment variables cannot be accessed, they would have to be set again to find the *julea-config* or *julea-server* command. 
+To do the whole configuration inside the Dockerfile finally becomes much too complicated and unclear. 
+Therefore it is recommended to outsource the configuration to an external script.
 
-#### Volume
-Um dynamischer Entwickeln zu können, gibt es die Möglichkeit lokale Verzeichnisse in den Container rein zu mounten. Somit könnte man auf dem lokalen Host an JULEA entwickeln oder benutzen und das Ergebnis dann in dem Container kompilieren und ausführen.
-Als Beispiel wird der Client hier erweitert. Im Client Verzeichnis liegt ein Ordner build in dem die Beispielfiles aus dem JULEA Projekt liegen. Diese werden in den Container gemountet. Im Container wird das Verzeichnis dann unter /build verfügbar sein.
+### Volume
+To be able to develop more dynamically, there is the possibility to mount local directories into the container. 
+So you could develop or use JULEA on the local host and then compile and execute the result in the container.
+As an example the client is extended here. In the client directory is a folder **build** which contains the example files from the JULEA project. 
+These files are mounted into the container and will be available under **/build**.
 
 ```
 docker run -it -d --network myNet -v /absolute/path/to/dir/build:/build --name julea-client julea-client-image
 ```
 
-#### Docker-Compose
-Um die Verwaltung von Container zu vereinfachen, gibt es im Root-Verzeichnis von JULEA ein docker-compose Beispiel. In diesem wird ein Server und ein Client erstellt.
-Der Name des Service von juleaServer ist der Servername, der für den Client eingetragen werden muss, ansonsten kann der Server vom Client aus nicht erreicht werden. Für den Server werden hier noch die Ports definiert, die nach außen und für andere Container sichtbar sind.
-Zudem wird für beide Container ein Name für das Image und einer für den Container festgelegt, damit keine zufälligen generiert werden und eindeutig bleiben.
-Für den Client wurde mit dem Volume wieder, wie im einzel Client Beispiel, ein Verzeichnis vom Host in den Container gemountet.
-Das erstellen des networks ist nicht mehr notwendig, da docker-compose das für einen übernimmt. Für das Beispiel wird ein Network erstellt, das julea_default heißt. Dieses lässt sich mit docker network inspect julea_default untersuchen. In diesem sind dann beide Beispiel Container zu finden.
+### Docker-Compose
+To simplify the administration of containers there is a docker-compose example in the root directory of JULEA. 
+In this example a server and a client is created. The name of the service of juleaServer is the server name, 
+which must be set for the client, otherwise the server cannot be reached from the client. 
+For the server the ports are defined, which are visible to the hostsystem and other containers.
+In addition a name for the image and one for the container for both services is defined, so that no random ones are generated and remain unique.
+For the client, a directory is mounted from the host into the container.
 
+Creating the network is no longer necessary, because docker-compose does this. For this example a network is created, 
+which is called *julea_default*. This can be examined with *docker network inspect julea_default*.
+
+To start both containers, just type:
 ```
 docker-compose up -d
 ```
 
 ## Singularity
-Hierfür werden keine Root Rechte benötigt.
+No root privileges are required on the system.
 
 ## Singularity Image
+All commands (exec, run and shell) use the image as read-only. To make changes to the image, the --writeable flag can be set. This requires root privileges. 
+To use Singularity with JULEA, e.g. to compile files in the image, a directory with the files can be mounted to the container. 
+In the JULEA config this directory will be used as output directory.
 
-Alle Befehle (exec, run und shell) benutzen das Image als read-only. Um Änderungen im Image vorzunehmen, 
-kann das --writeable flag gesetzt werden. Dies benötigt allerdings Root-Rechte. 
-Um Singularity in Verbindung mit JULEA zu nutzen, z.B. um Dateien im Image zu kompilieren, kann ein Verzeichnis rein gemountet werden. In der JULEA config wird dieses Verzeichnis dann als Output Directory genutzt werden.
-Außerdem muss darauf geachtet werden, dass standardmäßig einige Verzeichnisse aus dem Host System in das Image gemountet werden. Docs dazu: https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#system-defined-bind-paths
+In addition by default some directories from the host system are mounted into the image. Read abouth this here: 
+https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#system-defined-bind-paths
 
 ### Server
 
