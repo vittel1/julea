@@ -97,6 +97,38 @@ docker-compose up -d
 ```
 
 ## Singularity
+Hierfür werden keine Root Rechte benötigt.
 
+## Singularity Image
+
+Alle Befehle (exec, run und shell) benutzen das Image als read-only. Um Änderungen im Image vorzunehmen, 
+kann das --writeable flag gesetzt werden. Dies benötigt allerdings Root-Rechte. 
+Um Singularity in Verbindung mit JULEA zu nutzen, z.B. um Dateien im Image zu kompilieren, kann ein Verzeichnis rein gemountet werden. In der JULEA config wird dieses Verzeichnis dann als Output Directory genutzt werden.
+Außerdem muss darauf geachtet werden, dass standardmäßig einige Verzeichnisse aus dem Host System in das Image gemountet werden. Docs dazu: https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#system-defined-bind-paths
+
+### Server
+
+Logs: ~/.singularity/instances/logs/HOSTNAME/USERNAME/
+
+```
+singularity build --fakeroot julea-server.sif Singularity
+singularity instance start --bind singularity-mnt/:/singularity-mnt julea-server.sif julea-server-instance
+```
+
+Finde die IP der erstellten Instanz raus und füge diese später in die etc.hosts Datei im Client Verzeichnis. Die IP sollte im Subnetz 10.X.X.X sein.
+```
+singularity exec instance://julea-client-instance hostname -I
+```
+
+### Client
+
+Create etc.hosts Datei in dem Verzeichnis. Füge dort die IP Adresse ein und mounte diese Datei in die Instanz rein.
+
+```
+singularity build --fakeroot julea-client.sif Singularity
+singularity instance start --bind etc.hosts/:/etc/hosts --bind singularity-mnt/:/singularity-mnt julea-client.sif julea-client-instance
+singularity shell instance://julea-client-instance
+```
 
 ## Podman
+
