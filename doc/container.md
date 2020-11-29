@@ -131,37 +131,58 @@ docker-compose up -d
 ## Singularity
 No root privileges are required on the system.
 
+Logs can be found here: ~/.singularity/instances/logs/HOSTNAME/USERNAME/
+
 ## Singularity Image
 All commands (exec, run and shell) use the image as read-only. To make changes to the image, the --writeable flag can be set. This requires root privileges. 
 To use Singularity with JULEA, e.g. to compile files in the image, a directory with the files can be mounted to the container. 
-In the JULEA config this directory will be used as output directory.
+With *julea-config* this directory will be set as output directory.
 
-In addition by default some directories from the host system are mounted into the image. Read abouth this here: 
+In addition, by default some directories from the host system are mounted into the image. Read about this here: 
 https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#system-defined-bind-paths
 
+The singularity file uses the Docker images from Dockerhub.
+
 ### Server
-
-Logs: ~/.singularity/instances/logs/HOSTNAME/USERNAME/
-
+The Singularity server image copies a script into the image, which is executed when the instance is started.
+This script sets the configuration for JULEA. The path for the backends is set here to the mounted directory.
+Then the server is started with the hostname *juleaserver* and the port *9876*.
 ```
+cd ./container/singularity/server
 singularity build --fakeroot julea-server.sif Singularity
 singularity instance start --bind singularity-mnt/:/singularity-mnt julea-server.sif julea-server-instance
 ```
 
-Finde die IP der erstellten Instanz raus und füge diese später in die etc.hosts Datei im Client Verzeichnis. Die IP sollte im Subnetz 10.X.X.X sein.
+For the client, or other system, the IP address of the server is needed. This can be found out as follows.
+The IP should be in subnet 10.X.X.X.
 ```
 singularity exec instance://julea-client-instance hostname -I
 ```
 
 ### Client
+The Singularity client image proceeds the same way as the server image. 
+Again, a script is created that uses the hostname and port of the server.
+In order to resolve the hostname of the server, the following step must be executed.
+Alternatively you can also work with the IP address of the server, then this step is not necessary.
 
-Create etc.hosts Datei in dem Verzeichnis. Füge dort die IP Adresse ein und mounte diese Datei in die Instanz rein.
-
+Create an *etc.hosts* file in the directory of the client. 
+Add the IP address of the server and mount this file into the instance.
 ```
+cd ./container/singularity/client
 singularity build --fakeroot julea-client.sif Singularity
 singularity instance start --bind etc.hosts/:/etc/hosts --bind singularity-mnt/:/singularity-mnt julea-client.sif julea-client-instance
 singularity shell instance://julea-client-instance
 ```
 
-## Podman
+If you want to work with JULEA in the container, make sure that the environment variables are loaded.
+```
+. /julea/scripts/environment.sh
+```
 
+## Podman
+The Docker images and Dockerfiles are also supported by Podman. 
+Here you can use the same commands as for Docker. 
+Just replace *docker* with *podman* at the beginning of the command.
+
+### Podman-Compose
+To use the *docker-compose.yml* with Podman, the following project can be used: https://github.com/containers/podman-compose
