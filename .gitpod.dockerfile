@@ -1,1 +1,1 @@
-FROM docker.pkg.github.com/vittel1/julea/julea:latest
+FROM mpape234/julea-standard:1.0
