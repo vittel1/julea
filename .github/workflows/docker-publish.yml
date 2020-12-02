@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: JULEA-standard
+  IMAGE_NAME: julea
 
 jobs:
   # Run tests.
