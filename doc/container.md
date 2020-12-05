@@ -182,7 +182,7 @@ If you want to work with JULEA in the container, make sure that the environment 
 ## Podman
 The Docker images and Dockerfiles are also supported by Podman. 
 Here you can use the same commands as for Docker. 
-Just replace *docker* with *podman* at the beginning of the command.
+Just replace *docker* with *podman* at the beginning of the instruction.
 
 ### Podman-Compose
 To use the *docker-compose.yml* with Podman, the following project can be used: https://github.com/containers/podman-compose
