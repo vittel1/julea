@@ -1,4 +1,4 @@
-FROM ghcr.io/vittel1/julea-deps-standard:0.0.1
+FROM ghcr.io/vittel1/julea-deps-standard:0.0.3
 
 WORKDIR /julea
 
