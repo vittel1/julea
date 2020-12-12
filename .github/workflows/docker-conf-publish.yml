@@ -12,18 +12,18 @@ env:
   IMAGE_NAME: julea-config
 
 jobs:
-  push:
+  push-conf:
 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
-
       - name: Log into registry
         run: echo "${{ secrets.GIT_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build image
+        run: docker build . --file container/docker/github/Dockerfile_JULEA_Config --tag $IMAGE_NAME
 
       - name: Push image
         run: |

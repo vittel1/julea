@@ -1,6 +1,7 @@
-FROM ghcr.io/vittel1/julea-deps-standard:0.0.3
+FROM ghcr.io/vittel1/julea-ubuntu-deps-standard:1.0.0
 
 WORKDIR /julea
+COPY . .
 
 SHELL ["/bin/bash", "-c"]
 
