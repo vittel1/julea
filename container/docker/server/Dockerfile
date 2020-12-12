@@ -1,4 +1,4 @@
-FROM mpape234/julea-standard:1.0
+FROM ghcr.io/vittel1/julea-config:latest
 
 COPY docker-entrypoint.sh /entrypoint.sh
 EXPOSE 9876
