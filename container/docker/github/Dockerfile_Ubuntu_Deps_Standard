@@ -3,13 +3,12 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get -y install --no-install-recommends \
+ && apt-get -y install \
 	build-essential \
 	curl \
 	unzip \
 	git \
-	python3 \
- && rm -rf /var/lib/apt/lists/*
+	python3
 
 WORKDIR /julea-deps
 
