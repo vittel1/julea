@@ -1,4 +1,5 @@
-FROM ghcr.io/vittel1/julea-ubuntu-deps-standard:1.0.0
+FROM ghcr.io/vittel1/julea-ubunut-deps-standard:1.0.0
+
 
 WORKDIR /julea
 COPY . .
