@@ -1,15 +1,7 @@
 FROM ubuntu:20.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update \
- && apt-get -y install --no-install-recommends \
-	build-essential \
-	curl \
-	unzip \
-	python3
-
-RUN apt-get -y install git
+ADD container/docker/github/install-packages.sh .
+RUN ./install-packages.sh && rm install-packages.sh
 
 WORKDIR /julea
 COPY scripts/ ./scripts/ 
