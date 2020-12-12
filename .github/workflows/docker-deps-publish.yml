@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Log into registry
-        run: echo "${{ secrets.GIT_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
       - name: Build image
         run: docker build . --file container/docker/github/Dockerfile_Ubuntu_Deps_Standard --tag $IMAGE_NAME
+
+      - name: Log into registry
+        run: echo "${{ secrets.GIT_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         run: |
