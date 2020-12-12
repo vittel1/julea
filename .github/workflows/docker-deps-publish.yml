@@ -5,7 +5,7 @@ on:
     types: [published, edited]
 
 env:
-  IMAGE_NAME: julea-ubunut-deps-standard
+  IMAGE_NAME: julea-ubuntu-deps-standard
 
 jobs:
   push-deps:
