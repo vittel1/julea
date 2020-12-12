@@ -13,8 +13,9 @@ RUN apt-get update \
 
 WORKDIR /julea-deps
 
-COPY scripts/ .
+COPY . . 
 
 SHELL ["/bin/bash", "-c"]
 
-RUN ./install-dependencies.sh
+RUN ./scripts/install-dependencies.sh
+RUN rm -rf /julea-deps
