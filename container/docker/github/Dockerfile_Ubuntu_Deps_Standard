@@ -3,18 +3,19 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get -y install \
+ && apt-get -y install --no-install-recommends \
 	build-essential \
 	curl \
 	unzip \
-	git \
 	python3
+
+RUN apt-get -y install git
 
 WORKDIR /julea-deps
 
-COPY . . 
+COPY scripts/ . 
 
 SHELL ["/bin/bash", "-c"]
 
-RUN ./scripts/install-dependencies.sh
+RUN ./install-dependencies.sh
 RUN rm -rf /julea-deps
