@@ -1,13 +1,15 @@
 #!/bin/bash
 
-dnf -y upgrade-minimal
-dnf -y install --setopt=install_weak_deps=False \
-        @development-tools \
+yum update -y
+yum -y install \
+        gcc \
+        gcc-c++ \
+        make \
         curl \
         unzip \
         python3
 
-dnf -y install git
+yum -y install git
 
-dnf clean all 
+yum clean all
 rm -rf /var/cache/yum
