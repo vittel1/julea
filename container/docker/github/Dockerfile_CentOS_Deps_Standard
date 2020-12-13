@@ -7,4 +7,4 @@ WORKDIR /julea
 COPY scripts/ ./scripts/ 
 
 SHELL ["/bin/bash", "-c"]
-RUN ./scripts/install-dependencies.sh minimal
+RUN ./scripts/install-dependencies.sh
