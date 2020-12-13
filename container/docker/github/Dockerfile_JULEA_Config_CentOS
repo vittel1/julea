@@ -1,4 +1,4 @@
-FROM ghcr.io/vittel1/julea-centos-deps-minimal:1.0.1
+FROM ghcr.io/vittel1/julea-centos-deps-standard:1.0.0
 
 WORKDIR /julea
 COPY . .
