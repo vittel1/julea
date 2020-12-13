@@ -2,7 +2,7 @@
 
 dnf -y upgrade-minimal
 dnf -y install --setopt=install_weak_deps=False \
-        build-essential \
+        @development-tools \
         curl \
         unzip \
         python3
