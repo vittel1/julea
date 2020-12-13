@@ -4,7 +4,11 @@
 
 Root privileges are required on the system.
 
-### Docker Image
+Docker images are already deployed with JULEA.
+1. Dependencies Ubuntu: docker pull ghcr.io/vittel1/julea-ubuntu-deps-standard:1.0.0
+2. JULEA configured and compiled: docker pull ghcr.io/vittel1/julea-config:latest
+
+### Build Docker Image
 
 In the container/docker/github directory of the repository are two Dockerfiles that loads the standard dependencies and configures JULEA using Meson and Ninja. By default JULEA files are copied to **/julea**. 
 
@@ -12,14 +16,6 @@ The Dockerfiles can be modified to create a new image. For example the configura
 
 ```
 sudo docker build -t julea-standard:1.0 -f container/docker/github/Dockerfile_JULEA_Config .
-```
-
-The image can be published on Dockerhub. For this, the following commands must be executed. 
-Further information can be found here: https://docs.docker.com/docker-hub/repos/
-
-```
-sudo docker tag julea-standard:1.0 <DOCKER ID>/julea-standard:1.0
-sudo docker push <DOCKER ID>/julea-standard:1.0
 ```
 
 ### Use Docker Image
