@@ -10,6 +10,6 @@ services:
                 build:
                         context: ./container/docker/client
                 volumes:
-                        - "./container/docker/client/build:/build"
+                        - "./example:/build"
                 image: julea-client-image
                 container_name: julea-client

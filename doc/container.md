@@ -6,21 +6,20 @@ Root privileges are required on the system.
 
 ### Docker Image
 
-In the root directory of the repository is a Dockerfile that loads the standard dependencies 
-and configures JULEA using Meson and Ninja. By default JULEA files are copied to **/julea**. 
+In the container/docker/github directory of the repository are two Dockerfiles that loads the standard dependencies and configures JULEA using Meson and Ninja. By default JULEA files are copied to **/julea**. 
 
-The Dockerfile can be modified to create a new image. 
+The Dockerfiles can be modified to create a new image. For example the configuration image:
 
 ```
-docker build -t julea-standard:1.0 .
+sudo docker build -t julea-standard:1.0 -f container/docker/github/Dockerfile_JULEA_Config .
 ```
 
 The image can be published on Dockerhub. For this, the following commands must be executed. 
 Further information can be found here: https://docs.docker.com/docker-hub/repos/
 
 ```
-docker tag julea-standard:1.0 <DOCKER ID>/julea-standard:1.0
-docker push <DOCKER ID>/julea-standard:1.0
+sudo docker tag julea-standard:1.0 <DOCKER ID>/julea-standard:1.0
+sudo docker push <DOCKER ID>/julea-standard:1.0
 ```
 
 ### Use Docker Image
@@ -33,7 +32,7 @@ If docker-compose is not an option a network must be created for the communicati
 All containers that are supposed to interact with each other have set this network as a parameter.
 
 ```
-docker network create myNet
+sudo docker network create myNet
 ```
 
 #### Server
@@ -50,20 +49,20 @@ The default values for the script are provided by the *CMD* command (hostname: *
 
 ```
 cd ./container/docker/server
-docker build -t julea-server-image .
-docker run -it -d --name julea-server julea-server-image
-docker exec -ti julea-server /bin/bash
+sudo docker build -t julea-server-image .
+sudo docker run -it -d --name julea-server julea-server-image
+sudo docker exec -ti julea-server /bin/bash
 ```
 
 If the default values should be overwritten add the requested values at the end of the statement
 
 ```
-docker run -it -d --name julea-server julea-server-image SERVERNAME PORT
+sudo docker run -it -d --name julea-server julea-server-image SERVERNAME PORT
 ```
 
 For network communication, the hostname and port number given in the script must be set here. In addition the created network must be specified.
 ```
-docker run -it -d --network-alias juleaServer -p 9876:9876/tcp --network myNet --name julea-server julea-server-image
+sudo docker run -it -d --network-alias juleaServer -p 9876:9876/tcp --network myNet --name julea-server julea-server-image
 ```
 
 #### Client
@@ -74,19 +73,19 @@ This would normally happen because no permanent process is running.
 
 ```
 cd ./container/docker/client
-docker build -t julea-client-image .
-docker run -it -d --name julea-client julea-client-image
-docker exec -ti julea-client /bin/bash
+sudo docker build -t julea-client-image .
+sudo docker run -it -d --name julea-client julea-client-image
+sudo docker exec -ti julea-client /bin/bash
 ```
 
 If the default values should be overwritten:
 ```
-docker run -it -d --name julea-client julea-client-image SERVERNAME PORT
+sudo docker run -it -d --name julea-client julea-client-image SERVERNAME PORT
 ```
 
 To be able to communicate with the server, the network must also be specified.
 ```
-docker run -it -d --network myNet --name julea-client julea-client-image
+sudo docker run -it -d --network myNet --name julea-client julea-client-image
 ```
 
 ### Why to a script in ENTRYPOINT
@@ -109,7 +108,7 @@ As an example the client is extended here. In the client directory is a folder *
 These files are mounted into the container and will be available under **/build**.
 
 ```
-docker run -it -d --network myNet -v /absolute/path/to/dir/build:/build --name julea-client julea-client-image
+sudo docker run -it -d --network myNet -v /absolute/path/to/dir/build:/build --name julea-client julea-client-image
 ```
 
 ### Docker-Compose
