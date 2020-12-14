@@ -5,5 +5,5 @@ COPY . .
 
 SHELL ["/bin/bash", "-c"]
 RUN . scripts/environment.sh && \
-	meson setup --prefix="${HOME}/julea-install" -Db_sanitize=address,undefined bld && \
+	meson setup --prefix="${HOME}/julea-install" bld && \
 	ninja -C bld
