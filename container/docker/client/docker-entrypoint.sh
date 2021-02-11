@@ -14,4 +14,4 @@ julea-config --user \
   --kv-backend=lmdb --kv-component=server --kv-path="/tmp/julea-$(id -u)/lmdb" \
   --db-backend=sqlite --db-component=server --db-path="/tmp/julea-$(id -u)/sqlite"
 
-ps -aux && tail -f /dev/null
+tail -f /dev/null

@@ -1,7 +1,10 @@
-FROM ghcr.io/vittel1/julea-centos-deps-standard:1.0.0
+FROM ghcr.io/vittel1/julea-centos-deps-standard:1.0.1
 
 WORKDIR /julea
 COPY . .
+
+RUN yum install -y libubsan \
+	libasan
 
 SHELL ["/bin/bash", "-c"]
 RUN . scripts/environment.sh && \

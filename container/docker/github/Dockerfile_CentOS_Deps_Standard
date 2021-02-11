@@ -1,6 +1,6 @@
 FROM centos:latest
 
-ADD container/docker/github/install-centos-packages.sh .
+COPY container/docker/github/install-centos-packages.sh .
 RUN ./install-centos-packages.sh && rm install-centos-packages.sh
 
 WORKDIR /julea

@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: mpape234/julea-standard:1.0
+From: ghcr.io/vittel1/julea-config:latest
 
 %files
 	singularity-entrypoint.sh /singularity-entrypoint.sh

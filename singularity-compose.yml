@@ -1,0 +1,12 @@
+version: "1.0"
+instances:
+        juleaserver:
+                build:
+                  context: ./container/singularity/server
+                ports:
+                  - 9876:9876
+        juleaclient:
+                build:
+                        context: ./container/singularity/client
+                volumes:
+                  - ./container/singularity/client/singularity-mnt:/singularity-mnt
