@@ -12,10 +12,10 @@ Docker images are already deployed with JULEA.
 
 In the container/docker/github directory of the repository are two Dockerfiles that loads the standard dependencies and configures JULEA using Meson and Ninja. By default JULEA files are copied to **/julea**. 
 
-The Dockerfiles can be modified to create a new image. For example the configuration image:
+The Dockerfiles can be modified to create a new image. For example the Ubuntu dependcy image:
 
 ```
-sudo docker build -t julea-standard:1.0 -f container/docker/github/Dockerfile_JULEA_Config .
+sudo docker build -t julea-ubunut-deps-standard:1.0 -f container/docker/github/Dockerfile_Ubuntu_Deps_Standard .
 ```
 
 ### Use Docker Image
@@ -151,7 +151,7 @@ singularity instance start --bind singularity-mnt/:/singularity-mnt julea-server
 For the client, or other system, the IP address of the server is needed. This can be found out as follows.
 The IP should be in subnet 10.X.X.X.
 ```
-singularity exec instance://julea-client-instance hostname -I
+singularity exec instance://julea-server-instance hostname -I
 ```
 
 ### Client
